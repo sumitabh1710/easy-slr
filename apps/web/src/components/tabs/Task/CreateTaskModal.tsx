@@ -7,8 +7,9 @@ import {
   TextField,
   Button,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
-import { api } from "../utils/api";
+import { api } from "~/utils/api";
 
 interface CreateTaskModalProps {
   open: boolean;
@@ -25,6 +26,7 @@ export default function CreateTaskModal({
 }: CreateTaskModalProps) {
   const [title, setTitle] = useState("");
   const [projectId, setProjectId] = useState("");
+  const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("Medium");
   const [deadline, setDeadline] = useState("");
 
@@ -36,9 +38,13 @@ export default function CreateTaskModal({
     },
   });
 
+  const { data: projects, isLoading: loadingProjects } =
+    api.project.getAll.useQuery();
+
   const resetForm = () => {
     setTitle("");
     setProjectId("");
+    setDescription("");
     setPriority("Medium");
     setDeadline("");
   };
@@ -49,6 +55,7 @@ export default function CreateTaskModal({
     createTaskMutation.mutate({
       title,
       projectId,
+      description: description || undefined,
       priority,
       deadline,
     });
@@ -64,18 +71,46 @@ export default function CreateTaskModal({
           label="Title"
           fullWidth
           value={title}
+          required
           onChange={(e) => setTitle(e.target.value)}
         />
+
         <TextField
-          label="Project ID"
+          label="Description"
           fullWidth
+          multiline
+          minRows={2}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <TextField
+          select
+          label="Project"
+          fullWidth
+          required
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
-        />
+          disabled={loadingProjects}
+        >
+          {loadingProjects ? (
+            <MenuItem disabled>
+              <CircularProgress size={20} />
+            </MenuItem>
+          ) : (
+            projects?.map((project) => (
+              <MenuItem key={project.id} value={project.id}>
+                {project.name}
+              </MenuItem>
+            ))
+          )}
+        </TextField>
+
         <TextField
           select
           label="Priority"
           fullWidth
+          required
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
         >
@@ -85,15 +120,18 @@ export default function CreateTaskModal({
             </MenuItem>
           ))}
         </TextField>
+
         <TextField
           label="Deadline"
           type="datetime-local"
           fullWidth
+          required
           InputLabelProps={{ shrink: true }}
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
         />
       </DialogContent>
+
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button

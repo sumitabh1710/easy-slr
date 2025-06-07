@@ -5,22 +5,16 @@ import {
   Toolbar,
   Typography,
   Button,
-  Container,
   Box,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
   Tabs,
   Tab,
 } from "@mui/material";
 import { useSession, signOut } from "next-auth/react";
-import { api } from "../utils/api";
-import CreateTaskModal from "../components/CreateTaskModal";
 import { useRouter } from "next/router";
-import TaskTab from "~/components/tabs/TaskTab";
-import ProjectTab from "~/components/tabs/ProjectTab";
-import UserTab from "~/components/tabs/UserTab";
+import TaskTab from "~/components/tabs/Task/TaskTab";
+import ProjectTab from "~/components/tabs/Project/ProjectTab";
+import UserTab from "~/components/tabs/User/UserTab";
+import TeamsTab from "~/components/tabs/Team/TeamsTab";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -72,13 +66,11 @@ export default function Dashboard() {
           <Tab label="Teams" />
         </Tabs>
       </AppBar>
-
-      {/* Content */}
       <Box mt={3}>
         {tabIndex === 0 && <TaskTab />}
         {tabIndex === 1 && <ProjectTab />}
         {tabIndex === 2 && <UserTab />}
-        {tabIndex === 3 && <UserTab />}
+        {tabIndex === 3 && <TeamsTab />}
       </Box>
     </>
   );

@@ -118,6 +118,56 @@ export const userRouter = createTRPCRouter({
         role: user.role,
       };
     }),
+  updateUserByAdmin: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        email: z.string().email().optional(),
+        name: z.string().optional(),
+        role: z.enum(["USER", "ADMIN"]).optional(),
+        password: z.string().min(6).optional(),
+        teamId: z.string().nullable().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session?.user.role !== "ADMIN") {
+        throw new Error("Unauthorized");
+      }
+
+      if (input.email) {
+        const existingUser = await ctx.db.user.findUnique({
+          where: { email: input.email },
+        });
+
+        if (existingUser && existingUser.id !== input.id) {
+          throw new Error("Email already registered by another user");
+        }
+      }
+
+      let hashedPassword;
+      if (input.password) {
+        hashedPassword = await bcrypt.hash(input.password, 12);
+      }
+
+      const updatedUser = await ctx.db.user.update({
+        where: { id: input.id },
+        data: {
+          email: input.email,
+          name: input.name,
+          role: input.role,
+          teamId: input.teamId,
+          ...(hashedPassword ? { password: hashedPassword } : {}),
+        },
+      });
+
+      return {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        role: updatedUser.role,
+        teamId: updatedUser.teamId,
+      };
+    }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({
       select: {

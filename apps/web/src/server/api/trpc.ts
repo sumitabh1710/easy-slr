@@ -12,8 +12,8 @@ import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { getServerSession, type Session } from "next-auth";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { authOptions } from "~/pages/api/auth/[...nextauth]";
 
-import { authOptions, getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 
 /**
@@ -59,7 +59,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
-    db
   });
 };
 
@@ -150,6 +149,7 @@ export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session || !ctx.session.user) {
+      console.log("🔒 Session inside protectedProcedure:", ctx.session);
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({

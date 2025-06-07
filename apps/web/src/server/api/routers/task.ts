@@ -27,9 +27,7 @@ export const taskRouter = createTRPCRouter({
         },
       });
     }),
-
   getAll: protectedProcedure.query(async ({ ctx }) => {
-     console.log("SESSION:", ctx.session);
     return ctx.db.task.findMany();
   }),
 });

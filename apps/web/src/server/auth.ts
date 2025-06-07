@@ -52,6 +52,7 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
+  debug: true,
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
     DiscordProvider({
