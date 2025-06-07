@@ -14,6 +14,11 @@ export const projectRouter = createTRPCRouter({
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.project.findMany();
+    return ctx.db.project.findMany({
+      include: {
+        tasks: true,
+        team: true,
+      },
+    });
   }),
 });

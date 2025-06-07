@@ -13,6 +13,11 @@ export const teamRouter = createTRPCRouter({
     }),
 
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.team.findMany();
+    return ctx.db.team.findMany({
+      include: {
+        users: true,
+        projects: true,
+      },
+    });
   }),
 });

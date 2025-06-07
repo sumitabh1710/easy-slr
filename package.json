@@ -20,6 +20,11 @@
   "dependencies": {
     "@prisma/client": "^6.9.0",
     "easy-slr": "file:",
+    "jsonwebtoken": "^9.0.2",
+    "next-auth": "^4.24.11",
     "prisma": "^6.9.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9"
   }
 }
