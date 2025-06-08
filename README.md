@@ -20,7 +20,7 @@ A full-stack task management application built with **Next.js**, **tRPC**, **Pri
 
 ### 1. Clone the repository
 
-###Create a .env file in the root of your project and add the following variables:
+###Create a .env file in the easy-slr/apps/web and add the following variables:
 # Database connection URLs for Prisma
 DATABASE_URL="postgresql://postgres.irykywahtotjykpsapca:Google%401710@aws-0-us-east-2.pooler.supabase.com:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://postgres.irykywahtotjykpsapca:Google%401710@aws-0-us-east-2.pooler.supabase.com:5432/postgres"
