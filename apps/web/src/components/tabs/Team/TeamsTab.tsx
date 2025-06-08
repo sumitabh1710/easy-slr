@@ -16,11 +16,11 @@ import EditTeamModal from "./EditTeamModal";
 import { Team } from "@prisma/client";
 
 export default function TeamsTab() {
-  const { data: teams, isLoading, refetch } = api.team.getAll.useQuery();
+  const { data: teams, isPending, refetch } = api.team.getAll.useQuery();
   const [openCreate, setOpenCreate] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
-  if (isLoading)
+  if (isPending)
     return (
       <Box
         sx={{
@@ -53,6 +53,11 @@ export default function TeamsTab() {
                 divider
                 button
                 onClick={() => setSelectedTeam(team)}
+                sx={{
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
               >
                 <ListItemText
                   primary={team.name}

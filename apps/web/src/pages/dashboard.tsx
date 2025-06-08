@@ -38,6 +38,27 @@ export default function Dashboard() {
       <AppBar position="static">
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6">EasySLR Dashboard</Typography>
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabChange}
+            centered
+            sx={{
+              "& .MuiTab-root": {
+                color: "#000",
+              },
+              "& .MuiTab-root.Mui-selected": {
+                color: "#fff",
+              },
+              "& .MuiTabs-indicator": {
+                backgroundColor: "#fff",
+              },
+            }}
+          >
+            <Tab label="Tasks" />
+            <Tab label="Projects" />
+            <Tab label="Users" />
+            <Tab label="Teams" />
+          </Tabs>
           <Box display="flex" alignItems="center" gap={2}>
             <Typography>
               {session?.user?.name ?? session?.user?.email}
@@ -47,24 +68,6 @@ export default function Dashboard() {
             </Button>
           </Box>
         </Toolbar>
-        <Tabs
-          value={tabIndex}
-          onChange={handleTabChange}
-          centered
-          sx={{
-            "& .MuiTab-root": {
-              color: "#000",
-            },
-            "& .Mui-selected": {
-              color: "#fff",
-            },
-          }}
-        >
-          <Tab label="Tasks" />
-          <Tab label="Projects" />
-          <Tab label="Users" />
-          <Tab label="Teams" />
-        </Tabs>
       </AppBar>
       <Box mt={3}>
         {tabIndex === 0 && <TaskTab />}

@@ -118,7 +118,7 @@ export const userRouter = createTRPCRouter({
         role: user.role,
       };
     }),
-  updateUserByAdmin: protectedProcedure
+  updateByAdmin: protectedProcedure
     .input(
       z.object({
         id: z.string(),
@@ -169,17 +169,7 @@ export const userRouter = createTRPCRouter({
       };
     }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        teamId: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    return ctx.db.user.findMany({});
   }),
   getMe: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.session.user?.id) {

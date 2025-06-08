@@ -14,10 +14,10 @@ import { api } from "~/utils/api";
 import CreateProjectModal from "./CreateProjectModal";
 
 export default function ProjectTab() {
-  const { data: projects, isLoading, refetch } = api.project.getAll.useQuery();
+  const { data: projects, isPending, refetch } = api.project.getAll.useQuery();
   const [openModal, setOpenModal] = React.useState(false);
 
-  if (isLoading)
+  if (isPending)
     return (
       <Box
         sx={{
@@ -44,7 +44,15 @@ export default function ProjectTab() {
         <List>
           {projects?.length ? (
             projects.map((project) => (
-              <ListItem key={project.id} divider>
+              <ListItem
+                key={project.id}
+                divider
+                sx={{
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
+              >
                 <ListItemText
                   primary={project.name}
                   secondary={

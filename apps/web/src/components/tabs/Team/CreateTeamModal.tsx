@@ -66,8 +66,12 @@ export default function CreateTeamModal({ open, onClose, onCreated }: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained">
-          Create
+        <Button
+          onClick={handleSubmit}
+          disabled={createMutation.isPending}
+          variant="contained"
+        >
+          {createMutation.isPending ? "Creating..." : "Create"}
         </Button>
       </DialogActions>
     </Dialog>

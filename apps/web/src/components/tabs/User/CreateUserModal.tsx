@@ -82,8 +82,12 @@ export default function CreateUserModal({ open, onClose, onCreated }: Props) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit}>
-          Create
+        <Button
+          variant="contained"
+          disabled={createMutation.isPending}
+          onClick={handleSubmit}
+        >
+          {createMutation.isPending ? "Creating..." : "Create"}
         </Button>
       </DialogActions>
     </Dialog>

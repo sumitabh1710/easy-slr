@@ -27,7 +27,36 @@ export const taskRouter = createTRPCRouter({
         },
       });
     }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        assignedToId: z.string().optional(),
+        deadline: z.string().refine((val) => !isNaN(Date.parse(val)), {
+          message: "Invalid date format",
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.task.update({
+        where: { id: input.id },
+        data: {
+          userId: input.assignedToId,
+          deadline: new Date(input.deadline),
+        },
+      });
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.task.delete({ where: { id: input.id } });
+    }),
   getAll: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.task.findMany();
+    return ctx.db.task.findMany({
+      include: {
+        project: true,
+        assignedTo: true,
+      },
+    });
   }),
 });

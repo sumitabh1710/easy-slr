@@ -16,11 +16,11 @@ import CreateUserModal from "./CreateUserModal";
 import EditUserModal from "./EditUserModal";
 
 export default function UserTab() {
-  const { data: users, isLoading, refetch } = api.user.getAll.useQuery();
+  const { data: users, isPending, refetch } = api.user.getAll.useQuery();
   const [openCreate, setOpenCreate] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  if (isLoading)
+  if (isPending)
     return (
       <Box
         sx={{
@@ -55,8 +55,14 @@ export default function UserTab() {
             users.map((user) => (
               <ListItem
                 key={user.id}
+                divider
                 button
                 onClick={() => setSelectedUser(user)}
+                sx={{
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
               >
                 <ListItemText
                   primary={user.name ?? user.email}

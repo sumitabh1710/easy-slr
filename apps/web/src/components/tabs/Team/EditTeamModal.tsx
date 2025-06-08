@@ -9,8 +9,19 @@ import {
   MenuItem,
 } from "@mui/material";
 import { api } from "~/utils/api";
+import { Team } from "@prisma/client";
 
-export default function EditTeamModal({ team, onClose, onUpdated }) {
+interface EditTeamModalProps {
+  team: Team;
+  onClose: () => void;
+  onUpdated: () => void;
+}
+
+export default function EditTeamModal({
+  team,
+  onClose,
+  onUpdated,
+}: EditTeamModalProps) {
   const [name, setName] = useState(team.name);
   const [userIds, setUserIds] = useState<string[]>(team.users.map((u) => u.id));
 
@@ -60,8 +71,12 @@ export default function EditTeamModal({ team, onClose, onUpdated }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant="contained">
-          Save
+        <Button
+          onClick={handleSubmit}
+          disabled={updateMutation.isPending}
+          variant="contained"
+        >
+          {updateMutation.isPending ? "Saving..." : "Save"}
         </Button>
       </DialogActions>
     </Dialog>
