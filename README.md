@@ -42,6 +42,6 @@ JWT_SECRET=your_super_secret_key
 git clone https://github.com/sumitabh1710/easy-slr.git
 cd easy-slr/apps/web
 npm install
-npx prisma generate --schema=prisma/schema.prisma
+npx prisma generate
 npm run dev
 
