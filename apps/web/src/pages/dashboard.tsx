@@ -1,5 +1,3 @@
-// pages/dashboard.tsx
-
 import React from "react";
 import {
   Box,
