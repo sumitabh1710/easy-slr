@@ -43,7 +43,7 @@ export const api = createTRPCNext<AppRouter>({
           fetch(url, options) {
             return fetch(url, {
               ...options,
-              credentials: 'include',
+              credentials: "include",
             });
           },
         }),

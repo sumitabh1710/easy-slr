@@ -1,80 +1,138 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
-import React, { useState } from "react";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  Tabs,
-  Tab,
-} from "@mui/material";
-import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/router";
-import TaskTab from "~/components/tabs/Task/TaskTab";
-import ProjectTab from "~/components/tabs/Project/ProjectTab";
-import UserTab from "~/components/tabs/User/UserTab";
-import TeamsTab from "~/components/tabs/Team/TeamsTab";
+// pages/dashboard.tsx
 
-export default function Dashboard() {
+import React from "react";
+import {
+  Box,
+  Typography,
+  Container,
+  Grid,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+  Divider,
+} from "@mui/material";
+import { api } from "~/utils/api";
+import dayjs from "dayjs";
+import TaskPriorityChart from "~/components/dashboard/TaskPriorityChart";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+
+export default function DashboardPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [tabIndex, setTabIndex] = useState(0);
 
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setTabIndex(newValue);
-  };
+  const { data: tasks, isLoading: loadingTasks } = api.task.getAll.useQuery();
+  const { data: projects, isLoading: loadingProjects } =
+    api.project.getAll.useQuery();
 
-  const handleLogout = () => signOut();
+  const today = dayjs();
+  const dueToday =
+    tasks?.filter((task) => dayjs(task.deadline).isSame(today, "day")) ?? [];
+  const overdue =
+    tasks?.filter((task) => dayjs(task.deadline).isBefore(today, "day")) ?? [];
 
-  if (status === "loading") return <div>Loading...</div>;
   if (status === "unauthenticated") {
     router.push("auth/Login");
   }
 
   return (
-    <>
-      {/* Navbar */}
-      <AppBar position="static">
-        <Toolbar sx={{ justifyContent: "space-between" }}>
-          <Typography variant="h6">EasySLR Dashboard</Typography>
-          <Tabs
-            value={tabIndex}
-            onChange={handleTabChange}
-            centered
-            sx={{
-              "& .MuiTab-root": {
-                color: "#000",
-              },
-              "& .MuiTab-root.Mui-selected": {
-                color: "#fff",
-              },
-              "& .MuiTabs-indicator": {
-                backgroundColor: "#fff",
-              },
-            }}
-          >
-            <Tab label="Tasks" />
-            <Tab label="Projects" />
-            <Tab label="Users" />
-            <Tab label="Teams" />
-          </Tabs>
-          <Box display="flex" alignItems="center" gap={2}>
-            <Typography>
-              {session?.user?.name ?? session?.user?.email}
+    <Container sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Dashboard Overview
+      </Typography>
+
+      {loadingTasks || loadingProjects ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="300px"
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          {/* Top Summary Section */}
+          <Grid container spacing={3} sx={{ mb: 3 }}>
+            {/* Task Summary */}
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, height: "100%" }}>
+                <Typography variant="h6" gutterBottom>
+                  Task Summary
+                </Typography>
+                <Divider sx={{ mb: 1 }} />
+                <List>
+                  <ListItem>
+                    <ListItemText
+                      primary="Total Tasks"
+                      secondary={tasks?.length ?? 0}
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText
+                      primary="Due Today"
+                      secondary={dueToday.length}
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText
+                      primary="Overdue"
+                      secondary={overdue.length}
+                    />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* Project Overview */}
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, height: "100%" }}>
+                <Typography variant="h6" gutterBottom>
+                  Project Overview
+                </Typography>
+                <Divider sx={{ mb: 1 }} />
+                <List dense>
+                  {projects?.map((project) => (
+                    <ListItem key={project.id}>
+                      <ListItemText
+                        primary={project.name}
+                        secondary={`Tasks: ${project.tasks.length}`}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* Team Activity Placeholder */}
+            <Grid item xs={12} md={4}>
+              <Paper sx={{ p: 2, height: "100%" }}>
+                <Typography variant="h6" gutterBottom>
+                  Team Activity
+                </Typography>
+                <Divider sx={{ mb: 1 }} />
+                <Typography variant="body2" color="text.secondary">
+                  This section can later include recent activity, comments, or
+                  updates from your team.
+                </Typography>
+              </Paper>
+            </Grid>
+          </Grid>
+
+          {/* Chart Section */}
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Tasks by Priority
             </Typography>
-            <Button color="inherit" onClick={handleLogout}>
-              Logout
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-      <Box mt={3}>
-        {tabIndex === 0 && <TaskTab />}
-        {tabIndex === 1 && <ProjectTab />}
-        {tabIndex === 2 && <UserTab />}
-        {tabIndex === 3 && <TeamsTab />}
-      </Box>
-    </>
+            <Divider sx={{ mb: 2 }} />
+            <Box display="flex" justifyContent="center">
+              <TaskPriorityChart />
+            </Box>
+          </Paper>
+        </>
+      )}
+    </Container>
   );
 }

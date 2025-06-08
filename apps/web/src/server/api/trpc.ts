@@ -149,7 +149,6 @@ export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
     if (!ctx.session || !ctx.session.user) {
-      console.log("🔒 Session inside protectedProcedure:", ctx.session);
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
     return next({

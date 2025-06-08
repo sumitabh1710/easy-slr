@@ -19,10 +19,12 @@
   "packageManager": "pnpm@10.11.1",
   "dependencies": {
     "@prisma/client": "^6.9.0",
+    "dayjs": "^1.11.13",
     "easy-slr": "file:",
     "jsonwebtoken": "^9.0.2",
     "next-auth": "^4.24.11",
-    "prisma": "^6.9.0"
+    "prisma": "^6.9.0",
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.9"
