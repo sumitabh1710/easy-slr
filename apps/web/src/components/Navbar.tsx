@@ -94,7 +94,7 @@ export default function Navbar() {
                 >
                   <MenuItem
                     component={Link}
-                    href="/profile"
+                    href="/settings"
                     onClick={handleMenuClose}
                   >
                     Profile Settings

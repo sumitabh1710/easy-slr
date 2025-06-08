@@ -6,8 +6,11 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import jwt from "jsonwebtoken";
+import { Role } from "@prisma/client";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? "change_this";
+
+const RoleEnum = z.enum(["USER", "ADMIN"]);
 
 export const userRouter = createTRPCRouter({
   signup: publicProcedure
@@ -171,24 +174,28 @@ export const userRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.user.findMany({});
   }),
-  getMe: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.session.user?.id) {
-      throw new Error("User ID is not available in session");
-    }
-
-    return ctx.db.user.findUnique({
-      where: {
-        id: ctx.session.user.id,
-      },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        image: true,
-        teamId: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-  }),
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return await ctx.db.user.findUnique({
+        where: { id: input.id },
+      });
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string().min(1),
+        role: RoleEnum,
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.user.update({
+        where: { id: input.id },
+        data: {
+          name: input.name,
+          role: input.role,
+        },
+      });
+    }),
 });
